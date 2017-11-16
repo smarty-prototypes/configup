@@ -13,18 +13,10 @@ func NewListener(subscriber Subscriber, reader Reader) *DefaultListener {
 }
 
 func (this *DefaultListener) Listen() {
-	for this.listen(this.subscriber.Await()) {
+	for notification := range this.subscriber.Subscription() {
+		this.logger.Printf("[INFO] Received [%s] signal, reloading configuration...\n", notification)
+		this.reload()
 	}
-}
-
-func (this *DefaultListener) listen(notification interface{}) bool {
-	if notification == nil {
-		return false // no more notifications
-	}
-
-	this.logger.Printf("[INFO] Received [%s] signal, reloading configuration...\n", notification)
-	this.reload()
-	return true
 }
 
 func (this *DefaultListener) reload() {

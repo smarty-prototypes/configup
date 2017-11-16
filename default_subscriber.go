@@ -25,6 +25,6 @@ func (this *DefaultSubscriber) Unsubscribe() {
 	signal.Stop(this.subscription)
 	close(this.subscription)
 }
-func (this *DefaultSubscriber) Await() os.Signal {
-	return <-this.subscription
+func (this *DefaultSubscriber) Subscription() chan os.Signal {
+	return this.subscription
 }

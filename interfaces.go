@@ -22,5 +22,5 @@ type Listener interface {
 type Subscriber interface {
 	Subscribe(...os.Signal)
 	Unsubscribe()
-	Await() os.Signal
+	Subscription() chan os.Signal
 }
