@@ -7,11 +7,10 @@ type ConfigManager struct {
 }
 
 func NewConfigManager(path string) *ConfigManager {
-	reader := NewJSONReader(path)
-	storage := confighup.FromReader(reader)
+	storage := confighup.FromJSONFile(path, &ConfigFile{})
 	return &ConfigManager{storage: storage}
 }
 
-func (this *ConfigManager) Config() ConfigFile {
-	return this.storage.Load().(ConfigFile)
+func (this *ConfigManager) Config() *ConfigFile {
+	return this.storage.Load().(*ConfigFile)
 }

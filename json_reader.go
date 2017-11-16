@@ -1,17 +1,19 @@
-package main
+package confighup
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"reflect"
 )
 
 type JSONReader struct {
-	path string
+	path       string
+	configType reflect.Type
 }
 
-func NewJSONReader(path string) *JSONReader {
-	return &JSONReader{path: path}
+func NewJSONReader(path string, instance interface{}) *JSONReader {
+	return &JSONReader{path: path, configType: reflect.TypeOf(instance)}
 }
 
 func (this *JSONReader) Read() (interface{}, error) {
@@ -26,8 +28,8 @@ func (this *JSONReader) Read() (interface{}, error) {
 		return nil, err
 	}
 
-	config := ConfigFile{}
-	if err = json.Unmarshal(raw, &config); err != nil {
+	config := reflect.New(this.configType.Elem()).Interface()
+	if err = json.Unmarshal(raw, config); err != nil {
 		return nil, err
 	}
 

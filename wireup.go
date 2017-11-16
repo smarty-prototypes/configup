@@ -12,6 +12,11 @@ type Wireup struct {
 	signals []os.Signal
 }
 
+func FromJSONFile(filename string, instance interface{}) Storage {
+	reader := NewJSONReader(filename, instance)
+	return FromReader(reader)
+}
+
 func FromReader(reader Reader) Storage {
 	if storage, err := New(reader).Initialize(); err != nil {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
