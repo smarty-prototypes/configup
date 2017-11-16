@@ -10,8 +10,8 @@ import (
 func main() {
 	jsonReader := NewJSONReader(configFile)
 
-	watcher := confighup.New(jsonReader)
-	if err := watcher.Initialize(); err != nil {
+	watcher, err := confighup.New(jsonReader).Initialize()
+	if err != nil {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
 	}
 
