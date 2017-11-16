@@ -12,6 +12,11 @@ type Wireup struct {
 	signals []os.Signal
 }
 
+// FromJSONFile receives a filename and an instance of the type of struct
+// into which the contents of the specified file should be unmarshalled.
+// The instance is only used to derive type information. Rather than fill
+// the provided instance, the Storage will give back a fresh copy of the
+// unmarshalled data.
 func FromJSONFile(filename string, instance interface{}) Storage {
 	reader := NewJSONReader(filename, instance)
 	return FromReader(reader)
