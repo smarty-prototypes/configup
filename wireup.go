@@ -1,6 +1,7 @@
 package confighup
 
 import (
+	"log"
 	"os"
 	"sync/atomic"
 )
@@ -9,6 +10,15 @@ type Wireup struct {
 	reader  Reader
 	storage Storage
 	signals []os.Signal
+}
+
+func FromReader(reader Reader) Storage {
+	if storage, err := New(reader).Initialize(); err != nil {
+		log.Fatalln("[ERROR] Unable to read configuration:", err)
+		return nil
+	} else {
+		return storage
+	}
 }
 
 func New(reader Reader) *Wireup {

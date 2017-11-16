@@ -1,10 +1,6 @@
 package main
 
-import (
-	"log"
-
-	"github.com/smartystreets/confighup"
-)
+import "github.com/smartystreets/confighup"
 
 type ConfigManager struct {
 	storage confighup.Storage
@@ -12,11 +8,7 @@ type ConfigManager struct {
 
 func NewConfigManager(path string) *ConfigManager {
 	reader := NewJSONReader(path)
-	storage, err := confighup.New(reader).Initialize()
-	if err != nil {
-		log.Fatalln("[ERROR] Unable to read configuration:", err)
-	}
-
+	storage := confighup.FromReader(reader)
 	return &ConfigManager{storage: storage}
 }
 
