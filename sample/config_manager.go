@@ -11,9 +11,8 @@ type ConfigManager struct {
 }
 
 func NewConfigManager(path string) *ConfigManager {
-	jsonReader := NewJSONReader(path)
-
-	storage, err := confighup.New(jsonReader).Initialize()
+	reader := NewJSONReader(path)
+	storage, err := confighup.New(reader).Initialize()
 	if err != nil {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
 	}
