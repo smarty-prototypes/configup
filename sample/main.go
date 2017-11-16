@@ -10,10 +10,10 @@ import (
 func main() {
 	configFile, _ := os.Getwd()
 	configFile = path.Join(configFile, "config.json")
-	config := NewConfiguration(configFile)
+	manager := NewConfigManager(configFile)
 
 	for {
-		log.Println(config.Values())
+		log.Println(manager.Config())
 		time.Sleep(time.Second * 1)
 	}
 }

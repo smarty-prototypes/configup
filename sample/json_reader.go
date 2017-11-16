@@ -7,15 +7,15 @@ import (
 )
 
 type JSONReader struct {
-	configFile string
+	path string
 }
 
-func NewJSONReader(configFile string) *JSONReader {
-	return &JSONReader{configFile: configFile}
+func NewJSONReader(path string) *JSONReader {
+	return &JSONReader{path: path}
 }
 
 func (this *JSONReader) Read() (interface{}, error) {
-	file, err := os.Open(this.configFile)
+	file, err := os.Open(this.path)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (this *JSONReader) Read() (interface{}, error) {
 		return nil, err
 	}
 
-	config := ConfigValues{}
+	config := ConfigFile{}
 	if err = json.Unmarshal(raw, &config); err != nil {
 		return nil, err
 	}
