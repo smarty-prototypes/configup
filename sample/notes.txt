@@ -1,0 +1,18 @@
+//storage := &atomic.Value{}
+//storageReader := confighup.NewReader(jsonReader, storage)
+//
+//if _, err := storageReader.Read(); err != nil {
+//	log.Println("[ERROR] Unable to read configuration:", err)
+//	return
+//}
+//
+//signals := make(chan os.Signal, 16)
+//signal.Notify(signals, syscall.SIGHUP)
+//listener := confighup.NewListener(signals, storageReader)
+//
+//go listener.Listen()
+
+//for {
+//	log.Println(storage.Load())
+//	time.Sleep(time.Second * 1)
+//}

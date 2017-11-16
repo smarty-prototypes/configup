@@ -8,3 +8,7 @@ type Storage interface {
 	Store(interface{})
 	Load() interface{}
 }
+
+type Listener interface {
+	Listen()
+}
