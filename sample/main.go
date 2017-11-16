@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	jsonReader := NewJSONReader("/Users/jonathan/Code/src/github.com/smartystreets/confighup/sample/config.json")
+	jsonReader := NewJSONReader(configFile)
 
 	watcher := confighup.New(jsonReader)
 	if err := watcher.Initialize(); err != nil {
@@ -22,3 +22,5 @@ func main() {
 		time.Sleep(time.Second * 1)
 	}
 }
+
+const configFile = "/Users/jonathan/Code/src/github.com/smartystreets/confighup/sample/config.json"
