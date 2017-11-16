@@ -1,4 +1,4 @@
-package confighup
+package configup
 
 type DefaultReader struct {
 	inner   Reader

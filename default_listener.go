@@ -1,4 +1,4 @@
-package confighup
+package configup
 
 import "github.com/smartystreets/logging"
 

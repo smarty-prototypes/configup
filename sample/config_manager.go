@@ -1,13 +1,13 @@
 package main
 
-import "github.com/smartystreets/confighup"
+import "github.com/smartystreets/configup"
 
 type ConfigManager struct {
-	storage confighup.Storage
+	storage configup.Storage
 }
 
 func NewConfigManager(path string) *ConfigManager {
-	storage := confighup.FromJSONFile(path, &ConfigFile{})
+	storage := configup.FromJSONFile(path, &ConfigFile{})
 	return &ConfigManager{storage: storage}
 }
 
