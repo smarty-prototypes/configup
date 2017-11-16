@@ -2,23 +2,18 @@ package main
 
 import (
 	"log"
+	"os"
+	"path"
 	"time"
-
-	"github.com/smartystreets/confighup"
 )
 
 func main() {
-	jsonReader := NewJSONReader(configFile)
-
-	watcher, err := confighup.New(jsonReader).Initialize()
-	if err != nil {
-		log.Fatalln("[ERROR] Unable to read configuration:", err)
-	}
+	configFile, _ := os.Getwd()
+	configFile = path.Join(configFile, "config.json")
+	config := NewConfiguration(configFile)
 
 	for {
-		log.Println(watcher.Load())
+		log.Println(config.Values())
 		time.Sleep(time.Second * 1)
 	}
 }
-
-const configFile = "/Users/jonathan/Code/src/github.com/smartystreets/confighup/sample/config.json"

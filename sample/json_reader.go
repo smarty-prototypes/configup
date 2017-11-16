@@ -15,8 +15,6 @@ func NewJSONReader(configFile string) *JSONReader {
 }
 
 func (this *JSONReader) Read() (interface{}, error) {
-	config := Config{} // TODO: be able to create an instance of this and populate it generically
-
 	file, err := os.Open(this.configFile)
 	if err != nil {
 		return nil, err
@@ -28,6 +26,7 @@ func (this *JSONReader) Read() (interface{}, error) {
 		return nil, err
 	}
 
+	config := ConfigValues{}
 	if err = json.Unmarshal(raw, &config); err != nil {
 		return nil, err
 	}

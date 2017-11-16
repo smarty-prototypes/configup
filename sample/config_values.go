@@ -1,6 +1,6 @@
 package main
 
-type Config struct {
+type ConfigValues struct {
 	Username string
 	Password string
 }
