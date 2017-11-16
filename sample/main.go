@@ -12,7 +12,7 @@ func main() {
 
 	watcher := confighup.New(jsonReader)
 	if err := watcher.Initialize(); err != nil {
-		log.Fatalf("[ERROR] Unable to read configuration:", err)
+		log.Fatalln("[ERROR] Unable to read configuration:", err)
 	}
 
 	go watcher.Listen()
