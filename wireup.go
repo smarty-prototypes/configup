@@ -2,9 +2,7 @@ package confighup
 
 import (
 	"os"
-	"os/signal"
 	"sync/atomic"
-	"syscall"
 )
 
 type Wireup struct {
@@ -28,24 +26,17 @@ func (this *Wireup) WatchSignals(signals ...os.Signal) *Wireup {
 	return this
 }
 
-func (this *Wireup) Initialize() (*Watcher, error) {
+func (this *Wireup) Initialize() (Storage, error) {
 	reader := NewReader(this.reader, this.storage)
 	if _, err := reader.Read(); err != nil {
 		return nil, err
 	}
 
-	listener := NewListener(this.signalChannel(), reader)
-	return &Watcher{listener: listener, storage: this.storage}, nil
-}
+	subscriber := NewSubscriber()
+	subscriber.Subscribe(this.signals...)
 
-func (this *Wireup) signalChannel() chan os.Signal {
-	channel := make(chan os.Signal, 16)
+	listener := NewListener(subscriber, reader)
+	go listener.Listen()
 
-	if len(this.signals) == 0 {
-		signal.Notify(channel, syscall.SIGHUP)
-	} else {
-		signal.Notify(channel, this.signals...)
-	}
-
-	return channel
+	return this.storage, nil
 }

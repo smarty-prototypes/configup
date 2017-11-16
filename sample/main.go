@@ -15,8 +15,6 @@ func main() {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
 	}
 
-	go watcher.Listen()
-
 	for {
 		log.Println(watcher.Load())
 		time.Sleep(time.Second * 1)

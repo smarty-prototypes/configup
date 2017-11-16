@@ -1,26 +1,30 @@
 package confighup
 
-import (
-	"os"
-
-	"github.com/smartystreets/logging"
-)
+import "github.com/smartystreets/logging"
 
 type DefaultListener struct {
-	signals chan os.Signal
-	reader  Reader
-	logger  *logging.Logger
+	subscriber Subscriber
+	reader     Reader
+	logger     *logging.Logger
 }
 
-func NewListener(signals chan os.Signal, reader Reader) *DefaultListener {
-	return &DefaultListener{signals: signals, reader: reader}
+func NewListener(subscriber Subscriber, reader Reader) *DefaultListener {
+	return &DefaultListener{subscriber: subscriber, reader: reader}
 }
 
 func (this *DefaultListener) Listen() {
-	for notification := range this.signals {
-		this.logger.Printf("[INFO] Received [%s] signal, reloading configuration...\n", notification)
-		this.reload()
+	for this.listen(this.subscriber.Await()) {
 	}
+}
+
+func (this *DefaultListener) listen(notification interface{}) bool {
+	if notification == nil {
+		return false // no more notifications
+	}
+
+	this.logger.Printf("[INFO] Received [%s] signal, reloading configuration...\n", notification)
+	this.reload()
+	return true
 }
 
 func (this *DefaultListener) reload() {
@@ -29,4 +33,9 @@ func (this *DefaultListener) reload() {
 	} else {
 		this.logger.Println("[INFO] Configuration reloaded successfully.")
 	}
+}
+
+func (this *DefaultListener) Close() error {
+	this.subscriber.Unsubscribe()
+	return nil
 }

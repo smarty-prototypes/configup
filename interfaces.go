@@ -1,5 +1,10 @@
 package confighup
 
+import (
+	"io"
+	"os"
+)
+
 type Reader interface {
 	Read() (interface{}, error)
 }
@@ -11,4 +16,11 @@ type Storage interface {
 
 type Listener interface {
 	Listen()
+	io.Closer
+}
+
+type Subscriber interface {
+	Subscribe(...os.Signal)
+	Unsubscribe()
+	Await() os.Signal
 }
