@@ -17,5 +17,7 @@ func NewConfigManager(path string) *ConfigManager {
 }
 
 func (this *ConfigManager) Config() *Configuration {
+	// safely returns the latest instance of Configuration for use
+	// by multiple goroutines.
 	return this.storage.Load().(*Configuration)
 }
