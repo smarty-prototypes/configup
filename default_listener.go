@@ -20,7 +20,10 @@ func NewListener(signaler Signaler, reader Reader, storage Storage) *DefaultList
 }
 
 func (this *DefaultListener) Initialize() error {
-	_, err := this.reader.Read()
+	value, err := this.reader.Read()
+	if value != nil {
+		this.storage.Store(value)
+	}
 	return err
 }
 
@@ -35,6 +38,7 @@ func (this *DefaultListener) reload() {
 		this.logger.Printf("[ERROR] Unable to reload configuration: [%s]\n", err)
 	} else {
 		this.logger.Println("[INFO] Configuration reloaded successfully.")
+		this.storage.Store(updated)
 		this.notify(updated)
 	}
 }

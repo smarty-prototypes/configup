@@ -8,16 +8,24 @@ type Configuration struct {
 }
 
 type ConfigManager struct {
-	storage configup.StorageReader
+	listener      *configup.DefaultListener
+	notifications chan interface{}
 }
 
 func NewConfigManager(path string) *ConfigManager {
-	storage := configup.FromJSONFile(path, &Configuration{})
-	return &ConfigManager{storage: storage}
+	listener := configup.FromJSONFile(path, &Configuration{})
+	notifications := make(chan interface{}, 16)
+	listener.Subscribe(notifications)
+	return &ConfigManager{listener: listener, notifications: notifications}
+}
+
+func (this *ConfigManager) Notifications() *Configuration {
+	updated := <-this.notifications
+	return updated.(*Configuration)
 }
 
 func (this *ConfigManager) Config() *Configuration {
 	// safely returns the latest instance of Configuration for use
 	// by multiple goroutines.
-	return this.storage.Load().(*Configuration)
+	return this.listener.Load().(*Configuration)
 }
