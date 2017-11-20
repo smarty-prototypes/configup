@@ -8,7 +8,7 @@ type Configuration struct {
 }
 
 type ConfigManager struct {
-	storage configup.Storage
+	storage configup.StorageReader
 }
 
 func NewConfigManager(path string) *ConfigManager {

@@ -28,10 +28,16 @@ func (this *JSONReader) Read() (interface{}, error) {
 		return nil, err
 	}
 
-	config := reflect.New(this.configType.Elem()).Interface()
-	if err = json.Unmarshal(raw, config); err != nil {
+	// TODO: use this if the instance interface contains a pointer
+	// otherwise, use another algorithm to create an instance of a struct
+	item := this.instance()
+	if err = json.Unmarshal(raw, item); err != nil {
 		return nil, err
 	}
 
-	return config, nil
+	return item, nil
+}
+
+func (this *JSONReader) instance() interface{} {
+	return reflect.New(this.configType.Elem()).Interface()
 }

@@ -1,33 +1,90 @@
 package configup
 
-import "github.com/smartystreets/logging"
+import (
+	"sync"
+
+	"github.com/smartystreets/logging"
+)
 
 type DefaultListener struct {
-	subscriber Subscriber
-	reader     Reader
-	logger     *logging.Logger
+	signaler    Signaler
+	reader      Reader
+	storage     Storage
+	subscribers []chan<- interface{}
+	lock        *sync.RWMutex
+	logger      *logging.Logger
 }
 
-func NewListener(subscriber Subscriber, reader Reader) *DefaultListener {
-	return &DefaultListener{subscriber: subscriber, reader: reader}
+func NewListener(signaler Signaler, reader Reader, storage Storage) *DefaultListener {
+	return &DefaultListener{signaler: signaler, reader: reader, storage: storage, lock: &sync.RWMutex{}}
+}
+
+func (this *DefaultListener) Initialize() error {
+	if value, err := this.reader.Read(); err != nil {
+		return err
+	} else {
+		this.storage.Store(value)
+		return nil
+	}
 }
 
 func (this *DefaultListener) Listen() {
-	for notification := range this.subscriber.Subscription() {
+	for notification := range this.signaler.Channel() {
 		this.logger.Printf("[INFO] Received [%s] signal, reloading configuration...\n", notification)
 		this.reload()
 	}
 }
 
 func (this *DefaultListener) reload() {
-	if _, err := this.reader.Read(); err != nil {
+	if updated, err := this.reader.Read(); err != nil {
 		this.logger.Printf("[ERROR] Unable to reload configuration: [%s]\n", err)
 	} else {
 		this.logger.Println("[INFO] Configuration reloaded successfully.")
+		this.storage.Store(updated)
+		this.notify(updated)
+	}
+}
+func (this *DefaultListener) notify(updated interface{}) {
+	this.lock.RLock()
+	defer this.lock.RUnlock()
+
+	for _, subscriber := range this.subscribers {
+		subscriber <- updated
 	}
 }
 
+func (this *DefaultListener) Load() interface{} {
+	return this.storage.Load()
+}
+
+func (this *DefaultListener) Subscribe(subscribers ...chan<- interface{}) {
+	this.lock.Lock()
+	this.subscribers = append(this.subscribers, subscribers...)
+	this.lock.Unlock()
+}
+func (this *DefaultListener) Unsubscribe(subscriber chan<- interface{}) {
+	this.lock.Lock()
+	defer this.lock.Unlock()
+
+	for i := range this.subscribers {
+		if subscriber != this.subscribers[i] {
+			continue
+		}
+
+		this.subscribers = append(this.subscribers[:i], this.subscribers[i+1:]...)
+		break
+	}
+}
 func (this *DefaultListener) Close() error {
-	this.subscriber.Unsubscribe()
+	this.lock.Lock()
+	defer this.lock.Unlock()
+
+	this.signaler.Close()
+
+	for _, subscriber := range this.subscribers {
+		close(subscriber)
+	}
+
+	this.subscribers = this.subscribers[0:0]
 	return nil
 }

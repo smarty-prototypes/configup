@@ -1,9 +1,6 @@
 package configup
 
-import (
-	"io"
-	"os"
-)
+import "os"
 
 type Reader interface {
 	Read() (interface{}, error)
@@ -11,16 +8,15 @@ type Reader interface {
 
 type Storage interface {
 	Store(interface{})
+	StorageReader
+}
+
+type StorageReader interface {
 	Load() interface{}
 }
 
-type Listener interface {
-	Listen()
-	io.Closer
-}
-
-type Subscriber interface {
-	Subscribe(...os.Signal)
-	Unsubscribe()
-	Subscription() chan os.Signal
+type Signaler interface {
+	Open(...os.Signal)
+	Close()
+	Channel() <-chan os.Signal
 }

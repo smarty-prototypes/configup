@@ -10,17 +10,18 @@ import (
 // The instance is only used to derive type information. Rather than fill
 // the provided instance, the Storage will give back a fresh copy of the
 // unmarshalled data.
-func FromJSONFile(filename string, instance interface{}, signals ...os.Signal) Storage {
+func FromJSONFile(filename string, instance interface{}, signals ...os.Signal) *DefaultListener {
 	reader := NewJSONReader(filename, instance)
 	return FromReader(reader, signals...)
 }
 
-func FromReader(reader Reader, signals ...os.Signal) Storage {
+func FromReader(reader Reader, signals ...os.Signal) *DefaultListener {
 	wireup := New(reader).WithSignal(signals...)
-	if storage, err := wireup.Initialize(); err != nil {
+	if listener, err := wireup.Initialize(); err != nil {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
 		return nil
 	} else {
-		return storage
+		go listener.Listen()
+		return listener
 	}
 }
