@@ -16,8 +16,7 @@ func FromJSONFile(filename string, instance interface{}, signals ...os.Signal) *
 }
 
 func FromReader(reader Reader, signals ...os.Signal) *DefaultListener {
-	wireup := New(reader).WithSignal(signals...)
-	if listener, err := wireup.Initialize(); err != nil {
+	if listener, err := New(reader, WithSignal(signals...)); err != nil {
 		log.Fatalln("[ERROR] Unable to read configuration:", err)
 		return nil
 	} else {

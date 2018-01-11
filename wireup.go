@@ -13,35 +13,19 @@ type Wireup struct {
 	subscribers []chan<- interface{}
 }
 
-func New(reader Reader) *Wireup {
-	return &Wireup{
+func New(reader Reader, options ...Option) (*DefaultListener, error) {
+	wireup := &Wireup{
 		reader:   reader,
 		storage:  &atomic.Value{},
 		signaler: NewSignaler(),
 	}
+	for _, option := range options {
+		option(wireup)
+	}
+	return wireup.initialize()
 }
 
-func (this *Wireup) WithStorage(storage Storage) *Wireup {
-	this.storage = storage
-	return this
-}
-
-func (this *Wireup) WithSignaler(signaler Signaler) *Wireup {
-	this.signaler = signaler
-	return this
-}
-
-func (this *Wireup) WithSignal(signals ...os.Signal) *Wireup {
-	this.signals = append(this.signals, signals...)
-	return this
-}
-
-func (this *Wireup) WithNotify(subscribers ...chan<- interface{}) *Wireup {
-	this.subscribers = append(this.subscribers, subscribers...)
-	return this
-}
-
-func (this *Wireup) Initialize() (*DefaultListener, error) {
+func (this *Wireup) initialize() (*DefaultListener, error) {
 	listener := NewListener(this.signaler, this.reader, this.storage)
 	if err := listener.Initialize(); err != nil {
 		return nil, err
@@ -50,4 +34,20 @@ func (this *Wireup) Initialize() (*DefaultListener, error) {
 	listener.Subscribe(this.subscribers...)
 	this.signaler.Open(this.signals...)
 	return listener, nil
+}
+
+type Option func(*Wireup)
+
+func WithStorage(storage Storage) Option {
+	return func(wireup *Wireup) { wireup.storage = storage }
+}
+func WithSignaler(signaler Signaler) Option {
+	return func(wireup *Wireup) { wireup.signaler = signaler }
+}
+func WithSignal(signals ...os.Signal) Option {
+	return func(wireup *Wireup) { wireup.signals = append(wireup.signals, signals...) }
+}
+
+func WithNotify(subscribers ...chan<- interface{}) Option {
+	return func(wireup *Wireup) { wireup.subscribers = append(wireup.subscribers, subscribers...) }
 }
