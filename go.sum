@@ -1,4 +1,4 @@
-github.com/smartystreets/assertions v1.0.0 h1:UVQPSSmc3qtTi+zPPkCXvZX9VvW/xT/NsRvKfwY81a8=
-github.com/smartystreets/assertions v1.0.0/go.mod h1:kHHU4qYBaI3q23Pp3VPrmWhuIUrLW/7eUrw0BU5VaoM=
-github.com/smartystreets/logging v1.0.0 h1:gje6Q/5dPvxhRmYwZykb0cZnLTeiiio5Sy9iyrJtnt4=
-github.com/smartystreets/logging v1.0.0/go.mod h1:Xbp3xEjGjcIU1oC100+eBIUiCxEh1VXTQ6ULao2bSJk=
+github.com/smartystreets/assertions v1.0.1 h1:voD4ITNjPL5jjBfgR/r8fPIIBrliWrWHeiJApdr3r4w=
+github.com/smartystreets/assertions v1.0.1/go.mod h1:kHHU4qYBaI3q23Pp3VPrmWhuIUrLW/7eUrw0BU5VaoM=
+github.com/smartystreets/logging v1.0.2 h1:ScLtqaKBnjIyTZw218wCALtb4RMMISWsk9xz1QP7EjM=
+github.com/smartystreets/logging v1.0.2/go.mod h1:66odR4LeIkc7lNzxhS+ktkvoSUhsyTM4e0NSXI9Bmac=
